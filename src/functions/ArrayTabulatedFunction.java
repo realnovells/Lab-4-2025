@@ -1,10 +1,17 @@
 package functions;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
-public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
-    private FunctionPoint[] points;
+public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable {
 
-    // Конструктор по границам и количеству точек
+    private FunctionPoint[] points;
+    public ArrayTabulatedFunction() {
+    }
+
     public ArrayTabulatedFunction(double leftX, double rightX, int pointsCount) {
         if (leftX >= rightX) {
             throw new IllegalArgumentException("Левая граница должна быть < правой");
@@ -21,7 +28,6 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
         }
     }
 
-    // Конструктор по границам и массиву значений Y
     public ArrayTabulatedFunction(double leftX, double rightX, double[] values) {
         if (leftX >= rightX) {
             throw new IllegalArgumentException("Левая граница должна быть < правой");
@@ -38,26 +44,22 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
         }
     }
 
-    // Конструктор по массиву точек FunctionPoint
     public ArrayTabulatedFunction(FunctionPoint[] points) {
         if (points == null) throw new IllegalArgumentException("Массив точек равен null");
         if (points.length < 2) throw new IllegalArgumentException("Количество точек должно быть >= 2");
 
-        // Проверка упорядоченности по X
         for (int i = 0; i < points.length - 1; i++) {
             if (points[i].getX() >= points[i + 1].getX()) {
                 throw new IllegalArgumentException("Точки должны быть строго упорядочены по X");
             }
         }
 
-        // Копирование точек
         this.points = new FunctionPoint[points.length];
         for (int i = 0; i < points.length; i++) {
             this.points[i] = new FunctionPoint(points[i]);
         }
     }
 
-    // Конструктор по массивам X и Y
     public ArrayTabulatedFunction(double[] xs, double[] ys) {
         if (xs == null || ys == null)
             throw new IllegalArgumentException("Массивы равны null");
@@ -75,7 +77,6 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
         }
     }
 
-    // Геттеры и сеттеры
     public FunctionPoint getPoint(int index) {
         if (index < 0 || index >= points.length)
             throw new FunctionPointIndexOutOfBoundsException("Индекс " + index + " вне границ массива точек");
@@ -151,7 +152,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
 
     public double getPointY(int index) {
         if (index < 0 || index >= points.length)
-            throw new FunctionPointIndexOutOfBoundsException("Индекс вне границ");
+            throw new FunctionPointIndexOutOfBoundsException("Индекс вне границ массива точек");
         return points[index].getY();
     }
 
@@ -188,5 +189,26 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable {
         newPoints[insertIndex] = new FunctionPoint(point);
         System.arraycopy(points, insertIndex, newPoints, insertIndex + 1, points.length - insertIndex);
         points = newPoints;
+    }
+
+    //Externalizable
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(points.length);
+        for (FunctionPoint p : points) {
+            out.writeDouble(p.getX());
+            out.writeDouble(p.getY());
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        int size = in.readInt();
+        points = new FunctionPoint[size];
+        for (int i = 0; i < size; i++) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            points[i] = new FunctionPoint(x, y);
+        }
     }
 }

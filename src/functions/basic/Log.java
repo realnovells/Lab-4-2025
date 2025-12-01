@@ -25,8 +25,11 @@ public class Log implements Function {
     @Override
     public double getFunctionValue(double x) {
         if (x <= 0) {
-            return Double.NaN; // логарифм отрицательного числа не определён
+            throw new IllegalArgumentException("Аргумент логарифма должен быть > 0");
         }
         return Math.log(x) / Math.log(base);
     }
+
+
+
 }
