@@ -21,7 +21,7 @@ public class Main {
 
         try {
             func.addPoint(new FunctionPoint(4, 16));
-            System.out.println("Точка добавлена: " + func.getPointCopy(func.getPointsCount() - 1).getX());
+            System.out.println("Точка добавлена: " + func.getPoint(func.getPointsCount() - 1).getX());
         } catch (InappropriateFunctionPointException e) {
             System.out.println("Ошибка при добавлении новой точки: " + e.getMessage());
         }
@@ -32,7 +32,7 @@ public class Main {
 
         System.out.println("\nТекущее состояние функции:");
         for (int i = 0; i < func.getPointsCount(); i++) {
-            FunctionPoint p = func.getPointCopy(i);
+            FunctionPoint p = func.getPoint(i);
             System.out.println("(" + p.getX() + ", " + p.getY() + ")");
         }
 

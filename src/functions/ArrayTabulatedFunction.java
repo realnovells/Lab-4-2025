@@ -118,10 +118,6 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable
         return points.length;
     }
 
-    public FunctionPoint getPointCopy(int index) {
-        return new FunctionPoint(points[index]);
-    }
-
     public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException {
         if (index < 0 || index >= points.length)
             throw new FunctionPointIndexOutOfBoundsException("Индекс вне границ");

@@ -37,4 +37,29 @@ public class TabulatedFunctions {
         }
         return new ArrayTabulatedFunction(leftX, rightX, y);
     }
+    public static void writeTabulatedFunction(TabulatedFunction function, Writer out) throws IOException {
+        PrintWriter pw = new PrintWriter(out);
+        int count = function.getPointsCount();
+        pw.print(count);
+        for (int i = 0; i < count; i++) {
+            pw.print(" " + function.getPointX(i) + " " + function.getPointY(i));
+        }
+
+        pw.flush();
+    }
+    public static TabulatedFunction readTabulatedFunction(Reader in) throws IOException {
+        StreamTokenizer st = new StreamTokenizer(in);
+        st.nextToken();
+        int count = (int) st.nval;
+        double[] x = new double[count];
+        double[] y = new double[count];
+        for (int i = 0; i < count; i++) {
+            st.nextToken();
+            x[i] = st.nval;
+
+            st.nextToken();
+            y[i] = st.nval;
+        }
+        return new ArrayTabulatedFunction(x, y);
+    }
 }

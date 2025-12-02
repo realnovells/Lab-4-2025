@@ -6,9 +6,6 @@ public interface TabulatedFunction extends Function, Serializable {
     int getPointsCount();
 
     FunctionPoint getPoint(int index);
-
-    FunctionPoint getPointCopy(int index);
-
     void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException;
 
     double getPointX(int index);

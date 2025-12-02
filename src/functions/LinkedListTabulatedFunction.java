@@ -111,6 +111,16 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Externali
         size++;
         return node;
     }
+    public FunctionNode deleteNodeByIndex(int index) {
+        if (size < 3) {
+            throw new IllegalStateException("Ошибка: меньше 3 точек");
+        }
+        FunctionNode node = getNodeByIndex(index);
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+        size--;
+        return node;
+    }
 
     public int getPointsCount() {
         return size;
@@ -118,10 +128,6 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Externali
 
     public FunctionPoint getPoint(int index) {
         return new FunctionPoint(getNodeByIndex(index).point);
-    }
-
-    public FunctionPoint getPointCopy(int index) {
-        return getPoint(index);
     }
 
     public double getPointX(int index) {
@@ -137,22 +143,34 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Externali
     }
 
     public void setPointX(int index, double x) throws InappropriateFunctionPointException {
-        if (index > 0 && x <= getPointX(index - 1))
+        FunctionNode node = getNodeByIndex(index);
+        FunctionNode prevNode = node.prev;
+        FunctionNode nextNode = node.next;
+
+        if (index > 0 && x <= prevNode.point.getX())
             throw new InappropriateFunctionPointException("Нарушение порядка X");
-        if (index < size - 1 && x >= getPointX(index + 1))
+        if (index < size - 1 && x >= nextNode.point.getX())
             throw new InappropriateFunctionPointException("Нарушение порядка X");
-        getNodeByIndex(index).point.setX(x);
+
+        node.point.setX(x);
     }
 
+
     public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException {
-        setPointX(index, point.getX());
-        getNodeByIndex(index).point.setY(point.getY());
+        FunctionNode node = getNodeByIndex(index);
+        FunctionNode prevNode = node.prev;
+        FunctionNode nextNode = node.next;
+        double x = point.getX();
+        if ((index > 0 && x <= prevNode.point.getX()) || (index < size - 1 && x >= nextNode.point.getX()))
+            throw new InappropriateFunctionPointException("Нарушение порядка X");
+        node.point.setX(x);
+        node.point.setY(point.getY());
     }
+
 
     public void deletePoint(int index) {
         if (size < 3)
             throw new IllegalStateException("Нельзя удалить точку: точек < 3");
-
         FunctionNode node = getNodeByIndex(index);
         node.prev.next = node.next;
         node.next.prev = node.prev;
